@@ -1,0 +1,206 @@
+.lista-produtos {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.actions-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.actions-bar h2 {
+  margin: 0;
+  color: #14365d;
+}
+
+.btn-adicionar {
+  background-color: #14365d;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.filtro-container {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.filtro-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.filtro-row {
+  display: flex;
+  gap: 20px;
+}
+
+.form-group {
+  flex: 1;
+  min-width: 0;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.form-buttons {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.btn-filtrar,
+.btn-limpar {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btn-filtrar {
+  background-color: #14365d;
+  color: white;
+}
+
+.btn-limpar {
+  background-color: #f0f0f0;
+  color: #666;
+}
+
+.table-container {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table th,
+.data-table td {
+  padding: 12px 15px;
+  text-align: left;
+}
+
+.data-table thead {
+  background-color: #f9f9f9;
+}
+
+.data-table th {
+  font-weight: 600;
+  color: #666;
+}
+
+.data-table tbody tr:hover {
+  background-color: #f5f5f5;
+}
+
+.data-table tbody tr:not(:last-child) {
+  border-bottom: 1px solid #eaeaea;
+}
+
+.quantidade {
+  font-weight: 500;
+}
+
+.quantidade.zero {
+  color: #dc3545;
+}
+
+.quantidade.baixo {
+  color: #ffc107;
+}
+
+.acoes {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-visualizar,
+.btn-editar,
+.btn-excluir {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px;
+}
+
+.btn-excluir {
+  color: #dc3545;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.pagination-btn {
+  background-color: #f0f0f0;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.pagination-btn:disabled {
+  background-color: #e0e0e0;
+  color: #999;
+  cursor: not-allowed;
+}
+
+.pagination-info {
+  color: #666;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+  color: #666;
+  font-size: 18px;
+}
+
+.no-data {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+
+@media (max-width: 992px) {
+  .filtro-row {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .form-buttons {
+    flex-direction: row;
+  }
+}

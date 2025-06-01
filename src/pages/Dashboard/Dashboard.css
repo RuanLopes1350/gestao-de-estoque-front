@@ -1,0 +1,156 @@
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.stats-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.stat-card {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+}
+
+.stat-icon {
+  font-size: 28px;
+  margin-right: 15px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #f0f5ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #14365d;
+}
+
+.stat-content h3 {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.stat-value {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #14365d;
+}
+
+.dashboard-card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 15px 20px;
+  border-bottom: 1px solid #eaeaea;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-header h2 {
+  margin: 0;
+  font-size: 18px;
+  color: #14365d;
+}
+
+.view-all {
+  color: #0066cc;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.table-container {
+  padding: 0;
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table th,
+.data-table td {
+  padding: 12px 15px;
+  text-align: left;
+}
+
+.data-table thead {
+  background-color: #f9f9f9;
+}
+
+.data-table th {
+  font-weight: 600;
+  color: #666;
+}
+
+.data-table tbody tr:not(:last-child) {
+  border-bottom: 1px solid #eaeaea;
+}
+
+.status {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status.warning {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.status.critical {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.tipo-entrada {
+  color: #28a745;
+  font-weight: 500;
+}
+
+.tipo-saida {
+  color: #dc3545;
+  font-weight: 500;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+  font-size: 18px;
+  color: #666;
+}
+
+.no-data {
+  text-align: center;
+  color: #666;
+  padding: 20px 0;
+}
+
+@media (max-width: 768px) {
+  .stats-cards {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 576px) {
+  .stats-cards {
+    grid-template-columns: 1fr;
+  }
+}
