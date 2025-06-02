@@ -204,3 +204,51 @@
     flex-direction: row;
   }
 }
+
+.items-per-page {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 15px;
+}
+
+.items-per-page span {
+  font-size: 14px;
+  color: #666;
+}
+
+.items-per-page select {
+  padding: 4px 6px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+/* Melhoria para destacar quantidades críticas */
+.quantidade.zero {
+  color: #dc3545;
+  font-weight: 600;
+}
+
+.quantidade.baixo {
+  color: #ffc107;
+  font-weight: 600;
+}
+
+/* Estilização para status badge */
+.status-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-badge.ativo {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.status-badge.inativo {
+  background-color: #f8d7da;
+  color: #721c24;
+}
