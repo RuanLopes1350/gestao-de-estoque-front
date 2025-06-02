@@ -9,32 +9,66 @@ const produtoService = {
     if (filtros.categoria) params.append('categoria', filtros.categoria);
     if (filtros.page) params.append('page', filtros.page);
     if (filtros.limite) params.append('limite', filtros.limite);
-    if (filtros.precoMinimo) params.append('precoMinimo', filtros.precoMinimo);
-    if (filtros.precoMaximo) params.append('precoMaximo', filtros.precoMaximo);
 
     try {
-      console.log('URL da requisição:', `/produtos?${params.toString()}`);
       const response = await api.get(`/produtos?${params.toString()}`);
-      console.log('Resposta bruta da API:', response.data);
-
-      // Mapear os campos recebidos da API para o formato esperado pelo frontend
-      const produtos = response.data.data.docs.map(produto => ({
-        _id: produto._id,
-        nome: produto.nome_produto,
-        codigo: produto.codigo_produto,
-        descricao: produto.descricao,
-        preco: produto.preco,
-        quantidade: produto.estoque,
-        categoria: produto.categoria,
-        fabricante: produto.marca,
-        estoqueMinimo: produto.estoque_min,
-        dataValidade: produto.data_validade || null,
-        status: produto.status
-      }));
+      
+      let produtos = [];
+      let totalPages = 1;
+      
+      // Verificar diferentes estruturas possíveis da API
+      if (response.data && response.data.data && Array.isArray(response.data.data.docs)) {
+        // Estrutura nested com data.docs
+        produtos = response.data.data.docs.map(produto => ({
+          _id: produto._id,
+          nome: produto.nome_produto,
+          codigo: produto.codigo_produto,
+          descricao: produto.descricao,
+          preco: produto.preco,
+          quantidade: produto.estoque,
+          categoria: produto.categoria,
+          fabricante: produto.marca,
+          estoqueMinimo: produto.estoque_min,
+          dataValidade: produto.data_validade,
+          status: produto.status
+        }));
+        totalPages = Math.ceil(response.data.data.total / filtros.limite) || 1;
+      } else if (response.data && Array.isArray(response.data.docs)) {
+        // Estrutura com apenas response.data.docs
+        produtos = response.data.docs.map(produto => ({
+          _id: produto._id,
+          nome: produto.nome_produto,
+          codigo: produto.codigo_produto,
+          descricao: produto.descricao,
+          preco: produto.preco,
+          quantidade: produto.estoque,
+          categoria: produto.categoria,
+          fabricante: produto.marca,
+          estoqueMinimo: produto.estoque_min,
+          dataValidade: produto.data_validade,
+          status: produto.status
+        }));
+        totalPages = Math.ceil(response.data.total / filtros.limite) || 1;
+      } else if (response.data && Array.isArray(response.data)) {
+        // Array simples
+        produtos = response.data.map(produto => ({
+          _id: produto._id,
+          nome: produto.nome_produto || produto.nome,
+          codigo: produto.codigo_produto || produto.codigo,
+          descricao: produto.descricao,
+          preco: produto.preco,
+          quantidade: produto.estoque || produto.quantidade,
+          categoria: produto.categoria,
+          fabricante: produto.marca || produto.fabricante,
+          estoqueMinimo: produto.estoque_min,
+          dataValidade: produto.data_validade,
+          status: produto.status !== undefined ? produto.status : true
+        }));
+      }
 
       return {
         docs: produtos,
-        totalPages: Math.ceil(response.data.data.total / filtros.limite) || 1,
+        totalPages: totalPages,
         page: filtros.page || 1
       };
     } catch (error) {
@@ -46,20 +80,21 @@ const produtoService = {
   buscar: async (id) => {
     try {
       const response = await api.get(`/produtos/${id}`);
-      const produto = response.data.data;
+      
+      // Suportar diferentes estruturas de resposta
+      const produto = response.data.data || response.data;
 
-      // Mapear resposta da API para formato esperado
       return {
         _id: produto._id,
-        nome: produto.nome_produto,
-        codigo: produto.codigo_produto,
+        nome: produto.nome_produto || produto.nome,
+        codigo: produto.codigo_produto || produto.codigo,
         descricao: produto.descricao,
         preco: produto.preco,
-        quantidade: produto.estoque,
+        quantidade: produto.estoque || produto.quantidade,
         categoria: produto.categoria,
-        fabricante: produto.marca,
-        estoqueMinimo: produto.estoque_min,
-        dataValidade: produto.data_validade || null,
+        fabricante: produto.marca || produto.fabricante,
+        estoqueMinimo: produto.estoque_min || produto.estoqueMinimo,
+        dataValidade: produto.data_validade || produto.dataValidade,
         status: produto.status
       };
     } catch (error) {
@@ -74,14 +109,16 @@ const produtoService = {
       nome_produto: produto.nome,
       codigo_produto: produto.codigo,
       descricao: produto.descricao,
-      preco: produto.preco,
+      preco: parseFloat(produto.preco),
+      custo: parseFloat(produto.custo),
       marca: produto.fabricante,
       categoria: produto.categoria,
       estoque: produto.quantidade,
       estoque_min: produto.estoqueMinimo,
+      id_fornecedor: produto.id_fornecedor || 564,
       status: true
     };
-
+  
     try {
       const response = await api.post('/produtos', produtoParaAPI);
       return response.data;
@@ -92,57 +129,26 @@ const produtoService = {
   },
 
   atualizar: async (id, produto) => {
-    // Mapear do formato do frontend para o formato da API
     const produtoParaAPI = {
       nome_produto: produto.nome,
       codigo_produto: produto.codigo,
       descricao: produto.descricao,
-      preco: produto.preco,
+      preco: parseFloat(produto.preco),
+      custo: parseFloat(produto.custo),
       marca: produto.fabricante,
       categoria: produto.categoria,
       estoque: produto.quantidade,
       estoque_min: produto.estoqueMinimo,
+      id_fornecedor: produto.id_fornecedor || 564,
       status: produto.status !== undefined ? produto.status : true
+      // data_validade não está mais sendo enviado
     };
-
+  
     try {
       const response = await api.put(`/produtos/${id}`, produtoParaAPI);
       return response.data;
     } catch (error) {
       console.error("Erro ao atualizar produto:", error);
-      throw error;
-    }
-  },
-
-  excluir: async (id) => {
-    try {
-      const response = await api.delete(`/produtos/${id}`);
-      return response.data;
-    } catch (error) {
-      console.error("Erro ao excluir produto:", error);
-      throw error;
-    }
-  },
-
-  listarEstoqueBaixo: async () => {
-    try {
-      const response = await api.get('/produtos');
-
-      // Filtrar produtos com estoque baixo
-      const todosProdutos = response.data.data.docs;
-      const produtosBaixoEstoque = todosProdutos.filter(p =>
-        p.estoque < (p.estoque_min || 5)
-      ).map(produto => ({
-        _id: produto._id,
-        nome: produto.nome_produto,
-        codigo: produto.codigo_produto,
-        quantidade: produto.estoque,
-        estoqueMinimo: produto.estoque_min
-      }));
-
-      return { produtos: produtosBaixoEstoque };
-    } catch (error) {
-      console.error("Erro ao listar produtos com estoque baixo:", error);
       throw error;
     }
   }

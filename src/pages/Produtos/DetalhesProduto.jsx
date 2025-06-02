@@ -66,7 +66,7 @@ const DetalhesProduto = () => {
         </div>
 
         <div className="produto-content">
-          <div className="produto-imagem">
+          {/* <div className="produto-imagem">
             {produto.imagemUrl ? (
               <img 
                 src={produto.imagemUrl} 
@@ -81,7 +81,7 @@ const DetalhesProduto = () => {
                 <span>Sem imagem disponível</span>
               </div>
             )}
-          </div>
+          </div> */}
 
           <div className="produto-detalhes">
             <div className="detalhes-grid">
@@ -117,12 +117,12 @@ const DetalhesProduto = () => {
                 <span className="detalhe-valor">{produto.estoqueMinimo || 10} unidades</span>
               </div>
 
-              <div className="detalhe-item">
+              {/* <div className="detalhe-item">
                 <span className="detalhe-label">Data de Validade:</span>
                 <span className="detalhe-valor">
                   {produto.dataValidade ? new Date(produto.dataValidade).toLocaleDateString('pt-BR') : 'Não se aplica'}
                 </span>
-              </div>
+              </div> */}
             </div>
 
             <div className="detalhes-descricao">

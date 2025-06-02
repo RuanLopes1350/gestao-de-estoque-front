@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import api from '../../services/api';
+import produtoService from '../../services/produtoService';
 import './ListaProdutos.css';
 
 const ListaProdutos = () => {
@@ -13,54 +13,13 @@ const ListaProdutos = () => {
       try {
         setLoading(true);
         
-        // Fazendo a requisição para a API
-        const response = await api.get('/produtos');
-        console.log('Resposta completa da API:', response.data);
+        // Usar o serviço atualizado
+        const responseProdutos = await produtoService.listar();
+        setProdutos(responseProdutos.docs || []);
         
-        // Verificando a estrutura exata da resposta
-        if (response.data && response.data.data && response.data.data.docs) {
-          // Se a resposta seguir o padrão esperado
-          const produtosAPI = response.data.data.docs;
-          setProdutos(produtosAPI.map(item => ({
-            _id: item._id,
-            nome: item.nome_produto,
-            codigo: item.codigo_produto,
-            preco: item.preco,
-            quantidade: item.estoque,
-            categoria: item.categoria,
-            status: item.status
-          })));
-        } else if (response.data && Array.isArray(response.data.docs)) {
-          // Formato alternativo possível
-          const produtosAPI = response.data.docs;
-          setProdutos(produtosAPI.map(item => ({
-            _id: item._id,
-            nome: item.nome_produto,
-            codigo: item.codigo_produto,
-            preco: item.preco,
-            quantidade: item.estoque,
-            categoria: item.categoria,
-            status: item.status
-          })));
-        } else if (response.data && Array.isArray(response.data)) {
-          // Se a API retornar um array simples
-          const produtosAPI = response.data;
-          setProdutos(produtosAPI.map(item => ({
-            _id: item._id,
-            nome: item.nome_produto || item.nome,
-            codigo: item.codigo_produto || item.codigo,
-            preco: item.preco,
-            quantidade: item.estoque || item.quantidade,
-            categoria: item.categoria,
-            status: item.status !== undefined ? item.status : true
-          })));
-        } else {
-          console.error('Formato de resposta inesperado:', response.data);
-          setError('Formato de resposta incorreto da API');
-        }
       } catch (err) {
         console.error('Erro ao carregar produtos:', err);
-        setError('Não foi possível carregar os produtos. Verifique o console para detalhes.');
+        setError('Não foi possível carregar os produtos. Verifique se a API está rodando.');
       } finally {
         setLoading(false);
       }

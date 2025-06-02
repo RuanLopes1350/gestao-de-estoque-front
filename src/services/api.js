@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // URL base da API
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5011';
 
 console.log('API URL configurada:', API_URL);
 
@@ -12,14 +12,10 @@ const api = axios.create({
   }
 });
 
-// Interceptador para adicionar token de autenticação
+// Interceptador para logging e debug
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('@GestaoEstoque:token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    console.log(`Requisição: ${config.method.toUpperCase()} ${config.baseURL}${config.url}`);
+    console.log(`Requisição: ${config.method.toUpperCase()} ${config.baseURL}${config.url}`, config.data);
     return config;
   },
   (error) => {
@@ -31,7 +27,7 @@ api.interceptors.request.use(
 // Interceptador de resposta para verificar erros
 api.interceptors.response.use(
   (response) => {
-    console.log(`Resposta recebida: ${response.status}`);
+    console.log(`Resposta recebida: ${response.status}`, response.data);
     return response;
   },
   (error) => {
