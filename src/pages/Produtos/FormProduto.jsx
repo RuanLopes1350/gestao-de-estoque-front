@@ -30,16 +30,20 @@ const FormProduto = () => {
         try {
           setLoading(true);
           const data = await produtoService.buscar(id);
-
-          // Formatar data de validade para o padrão yyyy-mm-dd para input date
-          // let formattedData = data;
-          // if (data.dataValidade) {
-          //   const date = new Date(data.dataValidade);
-          //   const formattedDate = date.toISOString().split('T')[0];
-          //   formattedData = { ...data, dataValidade: formattedDate };
-          // }
-
-          setProduto(formattedData);
+          
+          // Usar diretamente o objeto data retornado pela API
+          setProduto({
+            nome: data.nome || '',
+            codigo: data.codigo || '',
+            descricao: data.descricao || '',
+            preco: data.preco || '',
+            custo: data.custo || '',
+            quantidade: data.quantidade || 0,
+            categoria: data.categoria || '',
+            fabricante: data.fabricante || '',
+            id_fornecedor: data.id_fornecedor || 1,
+            estoqueMinimo: data.estoqueMinimo || ''
+          });
         } catch (error) {
           console.error('Erro ao carregar produto:', error);
           alert('Erro ao carregar dados do produto. Tente novamente.');
@@ -48,7 +52,7 @@ const FormProduto = () => {
         }
       }
     };
-
+  
     carregarProduto();
   }, [id]);
 
