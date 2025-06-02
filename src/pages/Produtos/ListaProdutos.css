@@ -198,14 +198,14 @@
   color: #666;
 }
 
-@media (max-width: 992px) {
+@media (max-width: 1200px) {
   .filtro-row {
-    flex-direction: column;
-    gap: 15px;
+    flex-wrap: wrap;
   }
-
-  .form-buttons {
-    flex-direction: row;
+  
+  .form-group {
+    min-width: 200px;
+    margin-bottom: 10px;
   }
 }
 

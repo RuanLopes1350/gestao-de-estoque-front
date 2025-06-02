@@ -11,6 +11,7 @@ const ListaProdutos = () => {
     nome: '',
     codigo: '',
     categoria: '',
+    status: '',
     page: 1,
     limite: 10
   });
@@ -123,6 +124,20 @@ const ListaProdutos = () => {
                 <option value="A">Categoria A</option>
                 <option value="B">Categoria B</option>
                 <option value="C">Categoria C</option>
+              </select>
+            </div>
+            {/* Novo seletor de status */}
+            <div className="form-group">
+              <label htmlFor="status">Status</label>
+              <select
+                id="status"
+                name="status"
+                value={filtros.status}
+                onChange={handleFiltroChange}
+              >
+                <option value="">Todos</option>
+                <option value="true">Ativos</option>
+                <option value="false">Inativos</option>
               </select>
             </div>
             <div className="form-buttons">

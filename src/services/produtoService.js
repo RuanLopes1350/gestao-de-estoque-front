@@ -7,6 +7,7 @@ const produtoService = {
     if (filtros.nome) params.append('nome_produto', filtros.nome);
     if (filtros.codigo) params.append('codigo_produto', filtros.codigo);
     if (filtros.categoria) params.append('categoria', filtros.categoria);
+    if (filtros.status !== undefined && filtros.status !== '') params.append('status', filtros.status);
     // Convertendo explicitamente para string
     if (filtros.page) params.append('page', String(filtros.page));
     if (filtros.limite) params.append('limite', String(filtros.limite));
@@ -104,6 +105,7 @@ const produtoService = {
         codigo: produto.codigo_produto || produto.codigo,
         descricao: produto.descricao,
         preco: produto.preco,
+        custo: produto.custo,
         quantidade: produto.estoque || produto.quantidade,
         categoria: produto.categoria,
         fabricante: produto.marca || produto.fabricante,
