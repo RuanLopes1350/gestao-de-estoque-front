@@ -143,26 +143,28 @@ const produtoService = {
   },
 
   atualizar: async (id, produto) => {
+    // Transformar do modelo de frontend para o modelo da API
     const produtoParaAPI = {
       nome_produto: produto.nome,
       codigo_produto: produto.codigo,
       descricao: produto.descricao,
-      preco: parseFloat(produto.preco),
-      custo: parseFloat(produto.custo),
-      marca: produto.fabricante,
-      categoria: produto.categoria,
-      estoque: produto.quantidade,
-      estoque_min: produto.estoqueMinimo,
-      id_fornecedor: produto.id_fornecedor || 564,
+      preco: parseFloat(produto.preco || 0),
+      custo: parseFloat(produto.custo || 0),
+      marca: produto.fabricante || '',
+      categoria: produto.categoria || '',
+      estoque: parseInt(produto.quantidade || 0),
+      estoque_min: parseInt(produto.estoqueMinimo || 0),
+      id_fornecedor: parseInt(produto.id_fornecedor || 564),
       status: produto.status !== undefined ? produto.status : true
-      // data_validade não está mais sendo enviado
     };
   
     try {
-      const response = await api.put(`/produtos/${id}`, produtoParaAPI);
+      console.log(`Enviando atualização para produto ${id}:`, produtoParaAPI);
+      const response = await api.patch(`/produtos/${id}`, produtoParaAPI);
+      console.log('Resposta da API após atualização:', response.data);
       return response.data;
     } catch (error) {
-      console.error("Erro ao atualizar produto:", error);
+      console.error("Erro ao atualizar produto:", error.response?.data || error);
       throw error;
     }
   },

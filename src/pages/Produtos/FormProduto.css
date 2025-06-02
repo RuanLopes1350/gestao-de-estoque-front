@@ -119,3 +119,23 @@
     gap: 15px;
   }
 }
+
+.form-check {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.form-check input[type="checkbox"] {
+  width: auto;
+  margin-right: 8px;
+}
+
+.submit-error {
+  margin-bottom: 20px;
+  padding: 10px;
+  border-radius: 4px;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  color: #721c24;
+}

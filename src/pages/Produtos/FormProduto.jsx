@@ -8,6 +8,7 @@ const FormProduto = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [submitError, setSubmitError] = useState('');
 
   const [produto, setProduto] = useState({
     nome: '',
@@ -18,10 +19,8 @@ const FormProduto = () => {
     quantidade: '',
     categoria: '',
     fabricante: '',
-    // imagemUrl: '',
-    // dataValidade: '',
-    id_fornecedor: 1,
-    estoqueMinimo: ''
+    estoqueMinimo: '',
+    status: true
   });
 
   useEffect(() => {
@@ -31,7 +30,7 @@ const FormProduto = () => {
           setLoading(true);
           const data = await produtoService.buscar(id);
           
-          // Usar diretamente o objeto data retornado pela API
+          // Garantir que todos os campos estão presentes mesmo quando a API não os retorna
           setProduto({
             nome: data.nome || '',
             codigo: data.codigo || '',
@@ -41,9 +40,12 @@ const FormProduto = () => {
             quantidade: data.quantidade || 0,
             categoria: data.categoria || '',
             fabricante: data.fabricante || '',
-            id_fornecedor: data.id_fornecedor || 1,
-            estoqueMinimo: data.estoqueMinimo || ''
+            id_fornecedor: data.id_fornecedor || 564, // Valor padrão se não existir
+            estoqueMinimo: data.estoqueMinimo || '',
+            status: data.status !== undefined ? data.status : true
           });
+          
+          console.log('Produto carregado:', data);
         } catch (error) {
           console.error('Erro ao carregar produto:', error);
           alert('Erro ao carregar dados do produto. Tente novamente.');
@@ -57,8 +59,11 @@ const FormProduto = () => {
   }, [id]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setProduto({ ...produto, [name]: value });
+    const { name, value, type, checked } = e.target;
+    // Para checkbox (como status), use o valor checked
+    const val = type === 'checkbox' ? checked : value;
+    
+    setProduto({ ...produto, [name]: val });
 
     // Limpar erro desse campo se houver
     if (errors[name]) {
@@ -75,27 +80,19 @@ const FormProduto = () => {
     if (!produto.preco) novosErros.preco = 'Preço é obrigatório';
     else if (parseFloat(produto.preco) <= 0) novosErros.preco = 'Preço deve ser maior que zero';
     
-    if (!produto.custo) novosErros.custo = 'Custo é obrigatório'; // Validação para custo
+    if (!produto.custo) novosErros.custo = 'Custo é obrigatório';
     else if (parseFloat(produto.custo) < 0) novosErros.custo = 'Custo não pode ser negativo';
     
-    if (!produto.quantidade) novosErros.quantidade = 'Quantidade é obrigatória';
+    if (produto.quantidade === '') novosErros.quantidade = 'Quantidade é obrigatória';
     else if (parseInt(produto.quantidade) < 0) novosErros.quantidade = 'Quantidade não pode ser negativa';
     
     setErrors(novosErros);
     return Object.keys(novosErros).length === 0;
   };
 
-  // const isValidUrl = (url) => {
-  //   try {
-  //     new URL(url);
-  //     return true;
-  //   } catch (err) {
-  //     return false;
-  //   }
-  // };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitError('');
 
     if (!validarFormulario()) {
       return;
@@ -108,10 +105,11 @@ const FormProduto = () => {
       const produtoParaEnvio = {
         ...produto,
         preco: parseFloat(produto.preco),
-        custo: parseFloat(produto.custo), // Garantir que custo seja um número
+        custo: parseFloat(produto.custo),
         quantidade: parseInt(produto.quantidade),
-        estoqueMinimo: produto.estoqueMinimo ? parseInt(produto.estoqueMinimo) : undefined,
-        id_fornecedor: parseInt(produto.id_fornecedor || 1) // Garantir que id_fornecedor seja um número
+        estoqueMinimo: produto.estoqueMinimo ? parseInt(produto.estoqueMinimo) : 0,
+        id_fornecedor: parseInt(produto.id_fornecedor || 564),
+        status: produto.status
       };
   
       if (id) {
@@ -123,7 +121,9 @@ const FormProduto = () => {
       navigate('/produtos');
     } catch (error) {
       console.error('Erro ao salvar produto:', error);
-      alert(`Erro ao ${id ? 'atualizar' : 'cadastrar'} produto. Verifique os dados e tente novamente.`);
+      setSubmitError(
+        `Erro ao ${id ? 'atualizar' : 'cadastrar'} produto: ${error.response?.data?.message || error.message || 'Verifique os dados e tente novamente.'}`
+      );
     } finally {
       setLoading(false);
     }
@@ -137,6 +137,10 @@ const FormProduto = () => {
         <div className="loading">Carregando...</div>
       ) : (
         <form onSubmit={handleSubmit}>
+          {submitError && (
+            <div className="error-message submit-error">{submitError}</div>
+          )}
+
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="nome">Nome *</label>
@@ -260,47 +264,19 @@ const FormProduto = () => {
                 <option value="C">Categoria C</option>
               </select>
             </div>
-          </div>
-
-          <div className="form-row">
-            {/* <div className="form-group">
-              <label htmlFor="dataValidade">Data de Validade</label>
-              <input
-                type="date"
-                id="dataValidade"
-                name="dataValidade"
-                value={produto.dataValidade || ''}
-                onChange={handleChange}
-              />
-            </div> */}
-
-            {/* <div className="form-group">
-              <label htmlFor="imagemUrl">URL da Imagem</label>
-              <input
-                type="text"
-                id="imagemUrl"
-                name="imagemUrl"
-                value={produto.imagemUrl || ''}
-                onChange={handleChange}
-                className={errors.imagemUrl ? 'error' : ''}
-              />
-              {errors.imagemUrl && <div className="error-message">{errors.imagemUrl}</div>}
-            </div> */}
-          </div>
-
-          {/* {produto.imagemUrl && (
-            <div className="imagem-preview">
-              <label>Preview da Imagem:</label>
-              <img 
-                src={produto.imagemUrl} 
-                alt="Preview do produto" 
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = 'https://via.placeholder.com/150?text=Imagem+Não+Disponível';
-                }}
-              />
+            
+            <div className="form-group form-check">
+              <label>
+                <input
+                  type="checkbox"
+                  name="status"
+                  checked={produto.status}
+                  onChange={handleChange}
+                />
+                Produto ativo
+              </label>
             </div>
-          )} */}
+          </div>
 
           <div className="form-actions">
             <button
