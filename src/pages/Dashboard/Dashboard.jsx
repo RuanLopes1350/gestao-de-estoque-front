@@ -32,8 +32,9 @@ const Dashboard = () => {
           0
         );
         
-        // Obter produtos com estoque baixo
+        // Obter produtos com estoque baixo usando o endpoint específico
         const estoqueBaixoResponse = await produtoService.listarEstoqueBaixo();
+        console.log('Produtos com estoque baixo:', estoqueBaixoResponse); // <-- Adicionar este log
         const produtosBaixoEstoque = estoqueBaixoResponse.produtos || [];
         
         // Obter últimas movimentações
@@ -129,7 +130,11 @@ const Dashboard = () => {
                 produtosBaixoEstoque.map((produto) => (
                   <tr key={produto._id}>
                     <td>{produto.codigo}</td>
-                    <td>{produto.nome}</td>
+                    <td>
+                      <Link to={`/produtos/${produto._id}`}>
+                        {produto.nome}
+                      </Link>
+                    </td>
                     <td>{produto.quantidade}</td>
                     <td>{produto.estoqueMinimo || 10}</td>
                     <td>

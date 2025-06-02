@@ -151,6 +151,65 @@ const produtoService = {
       console.error("Erro ao atualizar produto:", error);
       throw error;
     }
+  },
+
+  listarEstoqueBaixo: async () => {
+    try {
+      const response = await api.get('/produtos/estoque-baixo');
+      
+      // Verificar diferentes estruturas possíveis da API
+      let produtos = [];
+      
+      // Adicionar tratamento para a estrutura response.data.data
+      if (response.data && response.data.data && Array.isArray(response.data.data)) {
+        produtos = response.data.data.map(produto => ({
+          _id: produto._id,
+          nome: produto.nome_produto || produto.nome,
+          codigo: produto.codigo_produto || produto.codigo,
+          descricao: produto.descricao,
+          preco: produto.preco,
+          quantidade: produto.estoque || produto.quantidade,
+          categoria: produto.categoria,
+          fabricante: produto.marca || produto.fabricante,
+          estoqueMinimo: produto.estoque_min || produto.estoqueMinimo,
+          dataValidade: produto.data_validade || produto.dataValidade,
+          status: produto.status !== undefined ? produto.status : true
+        }));
+      } else if (response.data && response.data.produtos && Array.isArray(response.data.produtos)) {
+        produtos = response.data.produtos.map(produto => ({
+          _id: produto._id,
+          nome: produto.nome_produto || produto.nome,
+          codigo: produto.codigo_produto || produto.codigo,
+          descricao: produto.descricao,
+          preco: produto.preco,
+          quantidade: produto.estoque || produto.quantidade,
+          categoria: produto.categoria,
+          fabricante: produto.marca || produto.fabricante,
+          estoqueMinimo: produto.estoque_min || produto.estoqueMinimo,
+          dataValidade: produto.data_validade || produto.dataValidade,
+          status: produto.status !== undefined ? produto.status : true
+        }));
+      } else if (Array.isArray(response.data)) {
+        produtos = response.data.map(produto => ({
+          _id: produto._id,
+          nome: produto.nome_produto || produto.nome,
+          codigo: produto.codigo_produto || produto.codigo,
+          descricao: produto.descricao,
+          preco: produto.preco,
+          quantidade: produto.estoque || produto.quantidade,
+          categoria: produto.categoria,
+          fabricante: produto.marca || produto.fabricante,
+          estoqueMinimo: produto.estoque_min || produto.estoqueMinimo,
+          dataValidade: produto.data_validade || produto.dataValidade,
+          status: produto.status !== undefined ? produto.status : true
+        }));
+      }
+      
+      return { produtos };
+    } catch (error) {
+      console.error("Erro ao listar produtos com estoque baixo:", error);
+      throw error;
+    }
   }
 };
 
