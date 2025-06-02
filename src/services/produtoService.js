@@ -7,14 +7,18 @@ const produtoService = {
     if (filtros.nome) params.append('nome_produto', filtros.nome);
     if (filtros.codigo) params.append('codigo_produto', filtros.codigo);
     if (filtros.categoria) params.append('categoria', filtros.categoria);
-    if (filtros.page) params.append('page', filtros.page);
-    if (filtros.limite) params.append('limite', filtros.limite);
+    // Convertendo explicitamente para string
+    if (filtros.page) params.append('page', String(filtros.page));
+    if (filtros.limite) params.append('limite', String(filtros.limite));
 
     try {
+      console.log(`Fazendo requisição com parâmetros: ${params.toString()}`);
       const response = await api.get(`/produtos?${params.toString()}`);
+      console.log('Resposta da API:', response.data);
       
       let produtos = [];
       let totalPages = 1;
+      let total = 0;
       
       // Verificar diferentes estruturas possíveis da API
       if (response.data && response.data.data && Array.isArray(response.data.data.docs)) {
@@ -32,7 +36,8 @@ const produtoService = {
           dataValidade: produto.data_validade,
           status: produto.status
         }));
-        totalPages = Math.ceil(response.data.data.total / filtros.limite) || 1;
+        total = response.data.data.total || produtos.length;
+        totalPages = response.data.data.totalPages || Math.ceil(total / filtros.limite) || 1;
       } else if (response.data && Array.isArray(response.data.docs)) {
         // Estrutura com apenas response.data.docs
         produtos = response.data.docs.map(produto => ({
@@ -48,7 +53,8 @@ const produtoService = {
           dataValidade: produto.data_validade,
           status: produto.status
         }));
-        totalPages = Math.ceil(response.data.total / filtros.limite) || 1;
+        total = response.data.total || produtos.length;
+        totalPages = response.data.totalPages || Math.ceil(total / filtros.limite) || 1;
       } else if (response.data && Array.isArray(response.data)) {
         // Array simples
         produtos = response.data.map(produto => ({
@@ -64,12 +70,20 @@ const produtoService = {
           dataValidade: produto.data_validade,
           status: produto.status !== undefined ? produto.status : true
         }));
+        
+        // Se a API retorna só um array, vamos verificar se há headers com informações de paginação
+        const totalCountHeader = response.headers['x-total-count'] || response.headers['total-count'];
+        total = totalCountHeader ? parseInt(totalCountHeader) : produtos.length;
+        totalPages = response.headers['x-total-pages'] || Math.ceil(total / filtros.limite) || 1;
       }
 
+      console.log(`Produtos processados: ${produtos.length}, Total de páginas: ${totalPages}`);
+      
       return {
         docs: produtos,
-        totalPages: totalPages,
-        page: filtros.page || 1
+        totalPages: parseInt(totalPages),
+        page: parseInt(filtros.page || 1),
+        total: total
       };
     } catch (error) {
       console.error("Erro ao listar produtos:", error);

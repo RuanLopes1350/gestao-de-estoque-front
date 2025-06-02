@@ -4,6 +4,11 @@
   gap: 20px;
 }
 
+.dashboard a {
+  text-decoration: none;
+  color: inherit;
+}
+
 .stats-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));

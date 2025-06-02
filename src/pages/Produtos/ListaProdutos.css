@@ -4,6 +4,10 @@
   gap: 20px;
 }
 
+.lista-produtos a {
+  text-decoration: none;
+}
+
 .actions-bar {
   display: flex;
   justify-content: space-between;

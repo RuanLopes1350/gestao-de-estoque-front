@@ -19,11 +19,17 @@ const ListaProdutos = () => {
   const carregarProdutos = async () => {
     try {
       setLoading(true);
-      
+
+      console.log('Carregando produtos com filtros:', filtros);
       const responseProdutos = await produtoService.listar(filtros);
+      console.log('Resposta processada:', responseProdutos);
+
       setProdutos(responseProdutos.docs || []);
       setTotalPages(responseProdutos.totalPages || 1);
-      
+
+      // Registrar informações de paginação no console
+      console.log(`Recebidos ${responseProdutos.docs?.length || 0} produtos. Página ${responseProdutos.page} de ${responseProdutos.totalPages}`);
+
     } catch (err) {
       console.error('Erro ao carregar produtos:', err);
       setError('Não foi possível carregar os produtos. Verifique se a API está rodando.');
@@ -31,8 +37,9 @@ const ListaProdutos = () => {
       setLoading(false);
     }
   };
-  
+
   useEffect(() => {
+    console.log('Efeito disparado com página:', filtros.page, 'limite:', filtros.limite);
     carregarProdutos();
   }, [filtros.page, filtros.limite]);
 
@@ -77,7 +84,7 @@ const ListaProdutos = () => {
           + Novo Produto
         </Link>
       </div>
-      
+
       {/* Filtros */}
       <div className="filtro-container">
         <form className="filtro-form" onSubmit={handleFiltrar}>
@@ -195,40 +202,40 @@ const ListaProdutos = () => {
 
           {/* Componente de Paginação */}
           <div className="pagination">
-            <button 
-              onClick={() => handleChangePage(1)} 
+            <button
+              onClick={() => handleChangePage(1)}
               disabled={filtros.page === 1}
               className="pagination-btn"
             >
               &laquo;
             </button>
-            <button 
-              onClick={() => handleChangePage(filtros.page - 1)} 
+            <button
+              onClick={() => handleChangePage(filtros.page - 1)}
               disabled={filtros.page === 1}
               className="pagination-btn"
             >
               &lt;
             </button>
-            
+
             <span className="pagination-info">
-              Página {filtros.page} de {totalPages}
+              Página {filtros.page} de {totalPages} {produtos.length > 0 ? `(mostrando ${produtos.length} itens)` : ''}
             </span>
-            
-            <button 
-              onClick={() => handleChangePage(filtros.page + 1)} 
-              disabled={filtros.page === totalPages}
+
+            <button
+              onClick={() => handleChangePage(filtros.page + 1)}
+              disabled={filtros.page === totalPages || totalPages === 0}
               className="pagination-btn"
             >
               &gt;
             </button>
-            <button 
-              onClick={() => handleChangePage(totalPages)} 
-              disabled={filtros.page === totalPages}
+            <button
+              onClick={() => handleChangePage(totalPages)}
+              disabled={filtros.page === totalPages || totalPages === 0}
               className="pagination-btn"
             >
               &raquo;
             </button>
-            
+
             <div className="items-per-page">
               <span>Itens por página:</span>
               <select value={filtros.limite} onChange={handleLimiteChange}>
