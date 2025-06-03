@@ -33,7 +33,7 @@ const ListaProdutos = () => {
 
     } catch (err) {
       console.error('Erro ao carregar produtos:', err);
-      setError('Não foi possível carregar os produtos. Verifique se a API está rodando.');
+      // setError('Produto não encontrado, por favor verifique os filtros aplicados.');
     } finally {
       setLoading(false);
     }

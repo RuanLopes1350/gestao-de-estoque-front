@@ -139,3 +139,15 @@
   border: 1px solid #f5c6cb;
   color: #721c24;
 }
+
+.categoria-automatica {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
+.categoria-info {
+  font-size: 12px;
+  color: #666;
+  margin-top: 5px;
+  font-style: italic;
+}

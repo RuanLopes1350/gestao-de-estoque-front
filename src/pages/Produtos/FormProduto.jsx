@@ -23,6 +23,15 @@ const FormProduto = () => {
     status: true
   });
 
+  // Nova função para calcular categoria com base no preço
+  const calcularCategoria = (preco) => {
+    const precoNum = parseFloat(preco);
+    if (isNaN(precoNum)) return '';
+    if (precoNum >= 1001) return 'A';
+    if (precoNum >= 500) return 'B';
+    return 'C';
+  };
+
   useEffect(() => {
     const carregarProduto = async () => {
       if (id) {
@@ -31,20 +40,23 @@ const FormProduto = () => {
           const data = await produtoService.buscar(id);
           
           // Garantir que todos os campos estão presentes mesmo quando a API não os retorna
-          setProduto({
+          const produtoCarregado = {
             nome: data.nome || '',
             codigo: data.codigo || '',
             descricao: data.descricao || '',
             preco: data.preco || '',
             custo: data.custo || '',
             quantidade: data.quantidade || 0,
-            categoria: data.categoria || '',
             fabricante: data.fabricante || '',
             id_fornecedor: data.id_fornecedor || 564, // Valor padrão se não existir
             estoqueMinimo: data.estoqueMinimo || '',
             status: data.status !== undefined ? data.status : true
-          });
+          };
           
+          // Definir categoria automaticamente com base no preço carregado
+          produtoCarregado.categoria = calcularCategoria(produtoCarregado.preco);
+          
+          setProduto(produtoCarregado);
           console.log('Produto carregado:', data);
         } catch (error) {
           console.error('Erro ao carregar produto:', error);
@@ -63,7 +75,15 @@ const FormProduto = () => {
     // Para checkbox (como status), use o valor checked
     const val = type === 'checkbox' ? checked : value;
     
-    setProduto({ ...produto, [name]: val });
+    // Atualizar o produto com o novo valor
+    const novoProduto = { ...produto, [name]: val };
+    
+    // Se o campo alterado foi o preço, atualizar a categoria automaticamente
+    if (name === 'preco') {
+      novoProduto.categoria = calcularCategoria(val);
+    }
+    
+    setProduto(novoProduto);
 
     // Limpar erro desse campo se houver
     if (errors[name]) {
@@ -109,7 +129,9 @@ const FormProduto = () => {
         quantidade: parseInt(produto.quantidade),
         estoqueMinimo: produto.estoqueMinimo ? parseInt(produto.estoqueMinimo) : 0,
         id_fornecedor: parseInt(produto.id_fornecedor || 564),
-        status: produto.status
+        status: produto.status,
+        // Garantir que a categoria está definida corretamente
+        categoria: calcularCategoria(produto.preco)
       };
   
       if (id) {
@@ -252,17 +274,17 @@ const FormProduto = () => {
 
             <div className="form-group">
               <label htmlFor="categoria">Categoria</label>
-              <select
+              <input
+                type="text"
                 id="categoria"
                 name="categoria"
-                value={produto.categoria}
-                onChange={handleChange}
-              >
-                <option value="">Selecione...</option>
-                <option value="A">Categoria A</option>
-                <option value="B">Categoria B</option>
-                <option value="C">Categoria C</option>
-              </select>
+                value={produto.categoria ? `Categoria ${produto.categoria}` : 'Definida pelo preço'}
+                readOnly
+                className="categoria-automatica"
+              />
+              {/* <div className="categoria-info">
+                A: R$ 1001 ou mais | B: R$ 500 a R$ 1000 | C: até R$ 499
+              </div> */}
             </div>
             
             <div className="form-group form-check">

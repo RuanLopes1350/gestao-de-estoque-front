@@ -30,7 +30,7 @@ const Header = () => {
   return (
     <header className="app-header">
       <h1>{pageTitle}</h1>
-      <div className="header-actions">
+      {/* <div className="header-actions">
         <div className="search-bar">
           <input type="text" placeholder="Buscar..." />
           <button className="search-btn">🔍</button>
@@ -38,7 +38,7 @@ const Header = () => {
         <div className="notification-icon">
           🔔
         </div>
-      </div>
+      </div> */}
     </header>
   );
 };
